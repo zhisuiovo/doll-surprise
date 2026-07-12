@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>🧸 给双鱼女孩的娃娃惊喜小屋</title>
+<title>🧸 给佳慧的娃娃惊喜小屋</title>
 <style>
 :root{--pink:#FFB6C1;--hot:#FF69B4;--purple:#DDA0DD;--gold:#FFD700;}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -120,12 +120,12 @@ body{
 
 <!-- 顶部按钮 -->
 <div class="top-btns">
-  <button class="top-btn" id="musicBtn" onclick="toggleMusic()" title="播放《主动》加木">🎵</button>
+  <button class="top-btn playing" id="musicBtn" onclick="toggleMusic()" title="暂停《主动》加木">🎵</button>
   <button class="top-btn" onclick="openFortune()" title="今日运势">🔮</button>
 </div>
 
 <!-- 网易云音乐播放器 -->
-<div id="musicPlayer" style="position:fixed;bottom:8px;left:50%;transform:translateX(-50%);z-index:150;border-radius:10px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.12);opacity:0;transition:opacity 0.5s;">
+<div id="musicPlayer" style="position:fixed;bottom:8px;left:50%;transform:translateX(-50%);z-index:150;border-radius:10px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.12);opacity:1;transition:opacity 0.5s;">
   <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="280" height="52"
     src="https://music.163.com/outchain/player?type=2&id=2074440239&auto=1&height=32">
   </iframe>
@@ -136,7 +136,7 @@ body{
 
   <div class="header">
     <div class="mascot">🧸</div>
-    <h1>双鱼女孩的<br>娃娃惊喜小屋</h1>
+    <h1>佳慧的<br>娃娃惊喜小屋</h1>
     <p class="sub">♓ 每一只娃娃都在等你 ♓</p>
   </div>
 
@@ -194,7 +194,7 @@ body{
 
 <script>
 // ========== 音频 ==========
-let audioCtx=null,musicOn=false;
+let audioCtx=null,musicOn=true; // 默认开启自动播放
 // 使用网易云官方 iframe 播放器
 function toggleMusic(){
   const player = document.getElementById('musicPlayer');
@@ -307,7 +307,7 @@ function buildGrid(){
 }
 
 function showDoll(doll,idx){
-  let msgs=['你是最温柔的双鱼女孩~','每一天都像娃娃一样可爱！','朋友眼里的小天使 💕','愿你的世界永远柔软美好','像大海里的鱼儿一样自由','今天的你也闪闪发光 ✨','双鱼座的浪漫就是你呀','这个世界因为有你更甜了','保持可爱，永远被爱','你值得所有美好的事物'];
+  let msgs=['你是最温柔的佳慧~','每一天都像娃娃一样可爱！','朋友眼里的小天使 💕','愿你的世界永远柔软美好','像大海里的鱼儿一样自由','今天的你也闪闪发光 ✨','双鱼座的浪漫就是你呀','这个世界因为有你更甜了','保持可爱，永远被爱','你值得所有美好的事物'];
   let m=msgs[Math.floor(Math.random()*msgs.length)];
   document.getElementById('modalContent').innerHTML=`
     <div class="big-emoji">${doll.emoji}</div><h3>${doll.name}</h3>
@@ -390,7 +390,7 @@ setTimeout(()=>{
   document.getElementById('modal').style.display='flex'
 },700);
 
-console.log('🧸 双鱼女孩的娃娃惊喜小屋已就绪！');
+console.log('🧸 佳慧的娃娃惊喜小屋已就绪！');
 console.log('✨ 功能：鼠标拖尾 | 樱花飘落 | 夹娃娃机 | 收集成就 | 星座运势 | 秘密信封 | 留言板');
 </script>
 </body>
