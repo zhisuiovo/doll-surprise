@@ -187,10 +187,55 @@ body{
 
 <script>
 // ========== 音频 ==========
-let audioCtx=null,musicOn=true;
-function note(f,d,t='sine'){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();let o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=t;o.frequency.value=f;g.gain.setValueAtTime(.06,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+d);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+d)}
-function toggleMusic(){musicOn=!musicOn;document.getElementById('musicBtn').textContent=musicOn?'🎵':'🔇';document.getElementById('musicBtn').classList.toggle('playing',musicOn);if(musicOn)melody()}
-function melody(){if(!musicOn)return;let n=[523,587,659,698,784,880,988,1047,988,880,784,698,659,587,523];n.forEach((f,i)=>setTimeout(()=>{if(musicOn)note(f,.25,'triangle')},i*180));setTimeout(()=>melody(),n.length*180+800)}
+let audioCtx=null,musicOn=false; // 默认关闭，用户点击后开启
+let bgAudio = null;
+
+function initAudio() {
+  if (bgAudio) return;
+  bgAudio = document.getElementById('bgAudio');
+  if (!bgAudio) {
+    bgAudio = new Audio();
+    bgAudio.id = 'bgAudio';
+    bgAudio.loop = true;
+    bgAudio.volume = 0.3;
+    bgAudio.src = 'https://music.163.com/song/media/outer/url?id=2074440239.mp3';
+    bgAudio.crossOrigin = 'anonymous';
+    document.body.appendChild(bgAudio);
+  }
+}
+
+function toggleMusic(){
+  initAudio();
+  musicOn = !musicOn;
+  document.getElementById('musicBtn').textContent = musicOn ? '🎵' : '🔇';
+  document.getElementById('musicBtn').classList.toggle('playing', musicOn);
+  if (musicOn) {
+    bgAudio.play().catch(e => {
+      console.log('自动播放受限，请点击页面任意位置后重试');
+      musicOn = false;
+      document.getElementById('musicBtn').textContent = '🔇';
+      document.getElementById('musicBtn').classList.remove('playing');
+    });
+  } else {
+    bgAudio.pause();
+  }
+}
+
+// 用户首次点击页面时初始化音频
+document.addEventListener('click', function initOnce() {
+  if (!bgAudio) initAudio();
+}, { once: true });
+
+// 保留简短的交互音效（点击娃娃、抓娃娃等）
+function note(f,d,t='sine'){
+  if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  let o=audioCtx.createOscillator(),g=audioCtx.createGain();
+  o.type=t;o.frequency.value=f;
+  g.gain.setValueAtTime(.06,audioCtx.currentTime);
+  g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+d);
+  o.connect(g);g.connect(audioCtx.destination);
+  o.start();o.stop(audioCtx.currentTime+d);
+}
 
 // ========== 鼠标拖尾 ==========
 let trailTimer=0;
