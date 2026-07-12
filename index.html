@@ -2,8 +2,18 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>🧸 给佳慧的娃娃惊喜小屋</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="format-detection" content="telephone=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="x5-orientation" content="portrait">
+<meta name="x5-fullscreen" content="true">
+<meta name="x5-page-mode" content="app">
+<meta name="browsermode" content="application">
+<meta name="uc-mobile-web-app-capable" content="yes">
+<meta name="full-screen" content="yes">
+<title>佳慧的娃娃惊喜小屋</title>
 <style>
 :root{--pink:#FFB6C1;--hot:#FF69B4;--purple:#DDA0DD;--gold:#FFD700;}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -187,41 +197,64 @@ body{
 </div>
 
 <script>
-// ========== 音频 ==========
-let audioCtx=null,musicOn=true; // 默认开启自动播放
-let bgAudio = new Audio();
-bgAudio.src = 'https://music.163.com/song/media/outer/url?id=2074440239';
-bgAudio.loop = true;
-bgAudio.volume = 0.4;
-bgAudio.autoplay = true;
+// ========== 音频（兼容所有浏览器） ==========
+let audioCtx=null,musicOn=true;
+let bgAudio = null;
 
-// 页面加载时立即尝试播放
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    bgAudio.play().then(() => {
-      console.log('自动播放成功');
-    }).catch(() => {
-      console.log('自动播放被浏览器阻止，等待用户交互');
-    });
-  }, 500);
+// 创建兼容的音频对象
+function createAudio() {
+  if (bgAudio) return;
+  bgAudio = new Audio();
+  bgAudio.src = 'https://music.163.com/song/media/outer/url?id=2074440239';
+  bgAudio.loop = true;
+  bgAudio.volume = 0.4;
+  bgAudio.setAttribute('playsinline', '');
+  bgAudio.setAttribute('webkit-playsinline', '');
+  bgAudio.setAttribute('x5-video-player-type', 'h5');
+  bgAudio.setAttribute('x5-video-player-fullscreen', 'true');
+  bgAudio.preload = 'auto';
+  bgAudio.load();
+}
+
+// 微信/QQ/UC/夸克等浏览器需要 WeixinJSBridge 或用户手势
+function tryAutoplay() {
+  createAudio();
+  bgAudio.play().then(() => {
+    console.log('自动播放成功');
+  }).catch(() => {
+    // 静默失败，等用户交互后播放
+  });
+}
+
+// 微信 JSAPI 就绪后播放
+if (typeof WeixinJSBridge !== 'undefined') {
+  WeixinJSBridge.invoke('getNetworkType', {}, () => { tryAutoplay(); });
+} else {
+  document.addEventListener('WeixinJSBridgeReady', () => { tryAutoplay(); }, false);
+}
+
+// 页面加载后尝试
+window.addEventListener('load', () => { setTimeout(tryAutoplay, 300); });
+
+// DOM 加载后尝试
+document.addEventListener('DOMContentLoaded', () => { createAudio(); });
+
+// 触摸/点击任意位置后恢复播放
+['touchstart','click','scroll'].forEach(evt => {
+  document.addEventListener(evt, function resumeAudio() {
+    if (musicOn && bgAudio && bgAudio.paused) {
+      bgAudio.play().catch(() => {});
+    }
+  }, { once: false, passive: true });
 });
 
-// 任何用户交互后如果还没播放就补播
-document.addEventListener('click', function resumeAudio() {
-  if (musicOn && bgAudio.paused) {
-    bgAudio.play().catch(() => {});
-  }
-}, { once: false });
-
 function toggleMusic(){
+  createAudio();
   musicOn = !musicOn;
   document.getElementById('musicBtn').textContent = musicOn ? '🎵' : '🔇';
   document.getElementById('musicBtn').classList.toggle('playing', musicOn);
-  if (musicOn) {
-    bgAudio.play().catch(() => {});
-  } else {
-    bgAudio.pause();
-  }
+  if (musicOn) { bgAudio.play().catch(() => {}); }
+  else { bgAudio.pause(); }
 }
 
 // 简短交互音效（点击娃娃等）
