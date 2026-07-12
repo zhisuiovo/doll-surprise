@@ -120,8 +120,15 @@ body{
 
 <!-- 顶部按钮 -->
 <div class="top-btns">
-  <button class="top-btn playing" id="musicBtn" onclick="toggleMusic()" title="音乐开关">🎵</button>
+  <button class="top-btn" id="musicBtn" onclick="toggleMusic()" title="播放《主动》加木">🎵</button>
   <button class="top-btn" onclick="openFortune()" title="今日运势">🔮</button>
+</div>
+
+<!-- 网易云音乐播放器（默认隐藏） -->
+<div id="musicPlayer" style="display:none;position:fixed;bottom:10px;left:50%;transform:translateX(-50%);z-index:150;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.15);">
+  <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="300" height="52"
+    src="//music.163.com/outchain/player?type=2&id=2074440239&auto=1&height=32">
+  </iframe>
 </div>
 
 <!-- 主容器 -->
@@ -187,46 +194,17 @@ body{
 
 <script>
 // ========== 音频 ==========
-let audioCtx=null,musicOn=false; // 默认关闭，用户点击后开启
-let bgAudio = null;
-
-function initAudio() {
-  if (bgAudio) return;
-  bgAudio = document.getElementById('bgAudio');
-  if (!bgAudio) {
-    bgAudio = new Audio();
-    bgAudio.id = 'bgAudio';
-    bgAudio.loop = true;
-    bgAudio.volume = 0.3;
-    bgAudio.src = 'https://music.163.com/song/media/outer/url?id=2074440239.mp3';
-    bgAudio.crossOrigin = 'anonymous';
-    document.body.appendChild(bgAudio);
-  }
-}
-
+let audioCtx=null,musicOn=false;
+// 使用网易云官方 iframe 播放器
 function toggleMusic(){
-  initAudio();
+  const player = document.getElementById('musicPlayer');
   musicOn = !musicOn;
   document.getElementById('musicBtn').textContent = musicOn ? '🎵' : '🔇';
   document.getElementById('musicBtn').classList.toggle('playing', musicOn);
-  if (musicOn) {
-    bgAudio.play().catch(e => {
-      console.log('自动播放受限，请点击页面任意位置后重试');
-      musicOn = false;
-      document.getElementById('musicBtn').textContent = '🔇';
-      document.getElementById('musicBtn').classList.remove('playing');
-    });
-  } else {
-    bgAudio.pause();
-  }
+  player.style.display = musicOn ? 'block' : 'none';
 }
 
-// 用户首次点击页面时初始化音频
-document.addEventListener('click', function initOnce() {
-  if (!bgAudio) initAudio();
-}, { once: true });
-
-// 保留简短的交互音效（点击娃娃、抓娃娃等）
+// 简短交互音效（点击娃娃等）
 function note(f,d,t='sine'){
   if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
   let o=audioCtx.createOscillator(),g=audioCtx.createGain();
