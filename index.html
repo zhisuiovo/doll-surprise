@@ -124,10 +124,10 @@ body{
   <button class="top-btn" onclick="openFortune()" title="今日运势">🔮</button>
 </div>
 
-<!-- 网易云音乐播放器（默认隐藏） -->
-<div id="musicPlayer" style="display:none;position:fixed;bottom:10px;left:50%;transform:translateX(-50%);z-index:150;border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.15);">
-  <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="300" height="52"
-    src="//music.163.com/outchain/player?type=2&id=2074440239&auto=1&height=32">
+<!-- 网易云音乐播放器 -->
+<div id="musicPlayer" style="position:fixed;bottom:8px;left:50%;transform:translateX(-50%);z-index:150;border-radius:10px;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.12);opacity:0;transition:opacity 0.5s;">
+  <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="280" height="52"
+    src="https://music.163.com/outchain/player?type=2&id=2074440239&auto=1&height=32">
   </iframe>
 </div>
 
@@ -201,7 +201,7 @@ function toggleMusic(){
   musicOn = !musicOn;
   document.getElementById('musicBtn').textContent = musicOn ? '🎵' : '🔇';
   document.getElementById('musicBtn').classList.toggle('playing', musicOn);
-  player.style.display = musicOn ? 'block' : 'none';
+  player.style.opacity = musicOn ? '1' : '0';
 }
 
 // 简短交互音效（点击娃娃等）
