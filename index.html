@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>🧸 给双鱼女孩的娃娃惊喜小屋</title>
+<style>
+:root{--pink:#FFB6C1;--hot:#FF69B4;--purple:#DDA0DD;--gold:#FFD700;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  min-height:100vh;background:linear-gradient(180deg,#FCE4EC 0%,#F3E5F5 25%,#E8EAF6 55%,#FFF9C4 85%,#FFF8E1 100%);
+  font-family:'PingFang SC','Microsoft YaHei',sans-serif;overflow-x:hidden;cursor:default;
+}
+
+/* ===== 鼠标拖尾 ===== */
+.trail{position:fixed;pointer-events:none;z-index:999;font-size:18px;animation:trailFade 1s ease-out forwards;}
+@keyframes trailFade{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(0.3)}}
+
+/* ===== 樱花飘落 ===== */
+.petal{position:fixed;pointer-events:none;z-index:0;animation:petalFall linear forwards;}
+@keyframes petalFall{0%{transform:translate(0,-5vh) rotate(0deg);opacity:0.9}100%{transform:translate(var(--dx),105vh) rotate(var(--rot));opacity:0}}
+
+/* ===== 泡泡 ===== */
+.bubble{position:fixed;border-radius:50%;pointer-events:none;z-index:0;animation:floatUp linear infinite;opacity:0.5}
+@keyframes floatUp{0%{transform:translateY(105vh) scale(0)}10%{opacity:0.6}90%{opacity:0.2}100%{transform:translateY(-10vh) scale(1.2);opacity:0}}
+
+/* ===== 主布局 ===== */
+.main{position:relative;z-index:1;max-width:480px;margin:0 auto;padding:20px}
+
+/* ===== 头部 ===== */
+.header{text-align:center;padding:30px 20px 10px;animation:fadeInDown 1s ease}
+@keyframes fadeInDown{from{opacity:0;transform:translateY(-30px)}to{opacity:1;transform:translateY(0)}}
+.header .mascot{font-size:72px;animation:bounce 2s infinite;display:inline-block}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-18px)}}
+.header h1{font-size:26px;color:#E91E63;margin:10px 0 4px;text-shadow:2px 2px 4px rgba(233,30,99,0.15)}
+.header .sub{font-size:13px;color:#9C27B0;letter-spacing:2px}
+
+/* ===== 卡片 ===== */
+.card{background:rgba(255,255,255,0.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-radius:24px;padding:20px;margin:14px 0;box-shadow:0 6px 28px rgba(233,30,99,0.08);animation:fadeInUp 0.7s ease backwards}
+.card:nth-child(2){animation-delay:0.15s}.card:nth-child(3){animation-delay:0.3s}.card:nth-child(4){animation-delay:0.45s}.card:nth-child(5){animation-delay:0.55s}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.card h2{font-size:17px;color:#E91E63;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+
+/* ===== 夹娃娃机 ===== */
+.claw-display{width:100%;height:150px;background:linear-gradient(180deg,#E8EAF6,#F3E5F5,#FCE4EC);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:72px;border:3px dashed #E1BEE7;transition:all 0.4s;position:relative;overflow:hidden}
+.claw-display.win{border-color:#FFD700;border-style:solid;background:linear-gradient(180deg,#FFF9C4,#FFECB3,#FFE082);animation:shk .5s}
+@keyframes shk{0%,100%{transform:rotate(0)}25%{transform:rotate(3deg)}50%{transform:rotate(-3deg)}75%{transform:rotate(2deg)}}
+.claw-btn{width:100%;padding:14px;border:none;background:linear-gradient(135deg,#FF69B4,#E91E63);color:#fff;font-size:17px;font-weight:bold;border-radius:50px;cursor:pointer;letter-spacing:3px;box-shadow:0 6px 20px rgba(233,30,99,0.3);transition:all .3s;margin-top:12px}
+.claw-btn:hover{transform:translateY(-2px);box-shadow:0 8px 26px rgba(233,30,99,0.4)}
+.claw-btn:active{transform:scale(.97)}
+.claw-count{text-align:center;font-size:12px;color:#9C27B0;margin-top:8px}
+
+/* ===== 成就进度条 ===== */
+.achievement-bar{background:#F5F5F5;border-radius:20px;height:22px;overflow:hidden;margin:8px 0}
+.achievement-fill{height:100%;background:linear-gradient(90deg,#FFB6C1,#FF69B4,#E91E63);border-radius:20px;transition:width .5s ease;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;font-weight:bold}
+
+/* ===== 娃娃网格 ===== */
+.doll-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.doll-item{aspect-ratio:1;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:40px;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;box-shadow:0 3px 12px rgba(0,0,0,0.05)}
+.doll-item:hover{transform:translateY(-3px) scale(1.06);box-shadow:0 6px 20px rgba(233,30,99,0.18)}
+.doll-item:active{transform:scale(.94)}
+.doll-item.collected::after{content:'✅';position:absolute;bottom:2px;right:2px;font-size:14px}
+.doll-item .spark{position:absolute;pointer-events:none;animation:sparkAnim .6s ease-out forwards;font-size:14px}
+@keyframes sparkAnim{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--sx),var(--sy)) scale(0)}}
+
+/* ===== 信封 ===== */
+.envelope-wrap{text-align:center;padding:10px 0}
+.envelope{display:inline-block;font-size:64px;cursor:pointer;animation:bounce 2s infinite;position:relative;transition:all .3s}
+.envelope:hover{transform:scale(1.15)}
+.envelope.opened{animation:none;transform:scale(1.2)}
+.letter-reveal{max-height:0;overflow:hidden;transition:max-height .6s ease;background:#FFF9C4;border-radius:16px;padding:0 16px;margin-top:8px}
+.letter-reveal.show{max-height:300px;padding:16px}
+.letter-reveal p{font-size:14px;color:#795548;line-height:1.8;text-align:center}
+
+/* ===== 星座运势 ===== */
+.fortune-card{background:linear-gradient(135deg,#E8EAF6,#F3E5F5);border-radius:18px;padding:16px;text-align:center;margin-top:8px}
+.fortune-card .sign{font-size:48px}
+.fortune-card .fortune-text{font-size:14px;color:#5C6BC0;line-height:1.8;margin-top:6px}
+.fortune-card .lucky{font-size:12px;color:#9C27B0;margin-top:8px}
+
+/* ===== 心爆 ===== */
+.heart-burst{position:fixed;pointer-events:none;z-index:500;font-size:24px;animation:heartFly 1.2s ease-out forwards}
+@keyframes heartFly{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--hx),var(--hy)) scale(2.5)}}
+
+/* ===== Modal ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:flex;align-items:center;justify-content:center;animation:fadeIn .2s}
+@keyframes fadeIn{from{opacity:0}}
+.modal{background:#fff;border-radius:24px;padding:28px 22px;text-align:center;max-width:320px;width:90%;animation:popIn .35s cubic-bezier(.34,1.56,.64,1)}
+@keyframes popIn{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+.modal .big-emoji{font-size:80px;animation:bounce 1s infinite}
+.modal h3{font-size:20px;color:#E91E63;margin:10px 0}
+.modal p{color:#666;font-size:13px;line-height:1.7;margin-bottom:14px}
+.modal button{padding:11px 36px;border:none;background:linear-gradient(135deg,#FF69B4,#E91E63);color:#fff;border-radius:50px;font-size:15px;font-weight:bold;cursor:pointer}
+
+/* ===== 按钮组 ===== */
+.top-btns{position:fixed;top:16px;right:16px;z-index:100;display:flex;gap:8px}
+.top-btn{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.78);border:none;font-size:18px;cursor:pointer;backdrop-filter:blur(8px);box-shadow:0 3px 10px rgba(0,0,0,.06);transition:all .3s}
+.top-btn:active{transform:scale(.88)}
+.top-btn.playing{animation:spin 3s linear infinite}
+@keyframes spin{100%{transform:rotate(360deg)}}
+
+/* ===== 留言 ===== */
+.msg-board{min-height:100px;max-height:240px;overflow-y:auto;background:#FFF5F7;border-radius:16px;padding:12px;margin:8px 0}
+.msg-item{background:#fff;border-radius:10px;padding:8px 12px;margin:6px 0;font-size:13px;box-shadow:0 2px 6px rgba(0,0,0,.03);display:flex;align-items:center;gap:8px;animation:fadeInUp .3s ease backwards}
+.msg-input-row{display:flex;gap:8px}
+.msg-input-row input{flex:1;padding:10px 14px;border:2px solid #F8BBD0;border-radius:50px;font-size:13px;outline:none;background:#fff}
+.msg-input-row input:focus{border-color:#E91E63}
+.msg-input-row button{padding:10px 20px;border:none;background:linear-gradient(135deg,#FF69B4,#E91E63);color:#fff;border-radius:50px;font-size:13px;font-weight:bold;cursor:pointer;white-space:nowrap}
+
+/* ===== 响应式 ===== */
+@media(max-width:400px){.header h1{font-size:22px}.doll-grid{grid-template-columns:repeat(3,1fr);gap:8px}.doll-item{font-size:34px;border-radius:14px}}
+</style>
+</head>
+<body>
+
+<!-- 花瓣 -->
+<div id="petals" style="position:fixed;inset:0;pointer-events:none;z-index:0"></div>
+<!-- 泡泡 -->
+<div id="bubbles" style="position:fixed;inset:0;pointer-events:none;z-index:0"></div>
+
+<!-- 顶部按钮 -->
+<div class="top-btns">
+  <button class="top-btn playing" id="musicBtn" onclick="toggleMusic()" title="音乐开关">🎵</button>
+  <button class="top-btn" onclick="openFortune()" title="今日运势">🔮</button>
+</div>
+
+<!-- 主容器 -->
+<div class="main">
+
+  <div class="header">
+    <div class="mascot">🧸</div>
+    <h1>双鱼女孩的<br>娃娃惊喜小屋</h1>
+    <p class="sub">♓ 每一只娃娃都在等你 ♓</p>
+  </div>
+
+  <!-- 秘密信封 -->
+  <div class="card">
+    <h2>💌 一封给你的信</h2>
+    <div class="envelope-wrap">
+      <span class="envelope" id="envelope" onclick="openLetter()">✉️</span>
+      <p style="font-size:11px;color:#999;text-align:center">点击信封打开</p>
+    </div>
+    <div class="letter-reveal" id="letterReveal">
+      <p>哈喽~ 双鱼座的女孩：<br><br>
+      听说你收藏了好多娃娃，<br>
+      吐司、史迪奇、Angel、大猪猪...<br>
+      每只都很可爱！<br><br>
+      无聊的时候就来这里<br>
+      抓抓娃娃、看看运势~<br>
+      <span style="font-size:11px;color:#999">—— 一个朋友</span></p>
+    </div>
+  </div>
+
+  <!-- 夹娃娃机 -->
+  <div class="card">
+    <h2>🎮 迷你夹娃娃机</h2>
+    <div class="claw-display" id="clawDisplay">🎁</div>
+    <button class="claw-btn" id="clawBtn" onclick="playClaw()">🕹️ 抓 一 次</button>
+    <div class="claw-count">🎯 已抓：<span id="clawCount">0</span> 只 &nbsp;|&nbsp; 🏆 收集：<span id="collectCount">0</span>/12</div>
+    <div class="achievement-bar"><div class="achievement-fill" id="achieveFill" style="width:0%">0/12</div></div>
+  </div>
+
+  <!-- 娃娃收藏柜 -->
+  <div class="card">
+    <h2>🎀 娃娃收藏柜 <span style="font-size:11px;color:#999">点击互动</span></h2>
+    <div class="doll-grid" id="dollGrid"></div>
+  </div>
+
+  <!-- 留言板 -->
+  <div class="card">
+    <h2>💬 朋友留言板</h2>
+    <div class="msg-board" id="msgBoard">
+      <div class="msg-item"><span style="font-size:24px">🧸</span><span>欢迎来到娃娃小屋~ 点击娃娃有惊喜！</span></div>
+    </div>
+    <div class="msg-input-row">
+      <input id="msgInput" placeholder="说点什么..." maxlength="50" onkeydown="if(event.key==='Enter')sendMsg()">
+      <button onclick="sendMsg()">发送 💕</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal" style="display:none" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<script>
+// ========== 音频 ==========
+let audioCtx=null,musicOn=true;
+function note(f,d,t='sine'){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();let o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=t;o.frequency.value=f;g.gain.setValueAtTime(.06,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+d);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+d)}
+function toggleMusic(){musicOn=!musicOn;document.getElementById('musicBtn').textContent=musicOn?'🎵':'🔇';document.getElementById('musicBtn').classList.toggle('playing',musicOn);if(musicOn)melody()}
+function melody(){if(!musicOn)return;let n=[523,587,659,698,784,880,988,1047,988,880,784,698,659,587,523];n.forEach((f,i)=>setTimeout(()=>{if(musicOn)note(f,.25,'triangle')},i*180));setTimeout(()=>melody(),n.length*180+800)}
+
+// ========== 鼠标拖尾 ==========
+let trailTimer=0;
+document.addEventListener('mousemove',e=>{
+  let now=Date.now();if(now-trailTimer<60)return;trailTimer=now;
+  let t=document.createElement('span');t.className='trail';
+  t.textContent=['💕','✨','💖','🌟','💗','🎀','💝','🩷'][Math.floor(Math.random()*8)];
+  t.style.left=e.clientX+'px';t.style.top=e.clientY+'px';
+  t.style.setProperty('--tx',(Math.random()-.5)*60+'px');
+  t.style.setProperty('--ty',(Math.random()-.5)*60+'px');
+  document.body.appendChild(t);setTimeout(()=>t.remove(),1000);
+});
+
+// ========== 樱花 ==========
+function spawnPetals(){
+  let c=document.getElementById('petals');
+  for(let i=0;i<20;i++){
+    let p=document.createElement('span');p.className='petal';p.textContent='🌸';
+    p.style.left=Math.random()*100+'%';p.style.fontSize=(12+Math.random()*16)+'px';
+    p.style.animationDuration=(6+Math.random()*10)+'s';
+    p.style.animationDelay=Math.random()*8+'s';
+    p.style.setProperty('--dx',(Math.random()-.5)*200+'px');
+    p.style.setProperty('--rot',Math.random()*720+'deg');
+    c.appendChild(p);
+  }
+  setInterval(()=>{
+    let old=document.querySelectorAll('.petal');old.forEach(o=>o.remove());
+    for(let i=0;i<20;i++){
+      let p=document.createElement('span');p.className='petal';p.textContent='🌸';
+      p.style.left=Math.random()*100+'%';p.style.fontSize=(12+Math.random()*16)+'px';
+      p.style.animationDuration=(6+Math.random()*10)+'s';
+      p.style.setProperty('--dx',(Math.random()-.5)*200+'px');
+      p.style.setProperty('--rot',Math.random()*720+'deg');
+      c.appendChild(p);
+    }
+  },14000);
+}
+
+// ========== 泡泡 ==========
+function spawnBubbles(){
+  let c=document.getElementById('bubbles'),colors=['#FFB6C1','#DDA0DD','#B0E0E6','#FFE4E1','#E6E6FA','#FFF0F5'];
+  for(let i=0;i<22;i++){
+    let b=document.createElement('div');b.className='bubble';let s=8+Math.random()*35;
+    b.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};animation-duration:${5+Math.random()*12}s;animation-delay:${Math.random()*10}s`;
+    c.appendChild(b);
+  }
+}
+
+// ========== 心爆 ==========
+function heartBurst(x,y){
+  let hearts=['💕','💖','💗','💝','❤️','🩷','💘','🌟'];
+  for(let i=0;i<16;i++){
+    let h=document.createElement('span');h.className='heart-burst';h.textContent=hearts[i%8];
+    h.style.left=x+'px';h.style.top=y+'px';
+    h.style.setProperty('--hx',(Math.random()-.5)*180+'px');
+    h.style.setProperty('--hy',(Math.random()-.5)*180-60+'px');
+    document.body.appendChild(h);setTimeout(()=>h.remove(),1200);
+  }
+}
+
+// ========== 娃娃数据 ==========
+const dolls=[
+  {emoji:'🍞',name:'吐司抱枕',msg:'软软糯糯，抱着睡觉最舒服~',color:'#DEB887'},
+  {emoji:'🐤',name:'小黄鸭',msg:'嘎嘎嘎~ 今天也元气满满！',color:'#FFD700'},
+  {emoji:'🐾',name:'龙猫Totoro',msg:'呼噜噜~ 森林里的守护精灵',color:'#8899AA'},
+  {emoji:'🩷',name:'粉粉球',msg:'圆圆的笑脸就是你的小太阳',color:'#FFB6C1'},
+  {emoji:'💙',name:'史迪奇',msg:'Ohana就是家人的意思！',color:'#6495ED'},
+  {emoji:'🐰',name:'Angel兔兔',msg:'史迪奇的女朋友~ 天生一对',color:'#FFB7B2'},
+  {emoji:'🐇',name:'白粉小兔',msg:'粉耳朵白绒毛，乖巧又可爱',color:'#FFE4E1'},
+  {emoji:'🐷',name:'大猪猪',msg:'嘿嘿嘿~ 笑得最开心的就是我！',color:'#FFB6C1'},
+  {emoji:'🐽',name:'小猪猪',msg:'跟着姐姐吃吃喝喝真幸福~',color:'#FFC0CB'},
+  {emoji:'💙',name:'史迪奇二号',msg:'两只史迪奇，双倍快乐！',color:'#4169E1'},
+  {emoji:'🧸',name:'神秘小熊',msg:'嘘~ 这是只属于你的秘密娃娃',color:'#D2B48C'},
+  {emoji:'🎀',name:'隐藏款',msg:'只有特别的人才能看到我哦~',color:'#E6E6FA'},
+];
+
+let collected=new Set();
+let clawCount=0;
+
+// ========== 娃娃展示柜 ==========
+function buildGrid(){
+  let g=document.getElementById('dollGrid');
+  dolls.forEach((d,i)=>{
+    let item=document.createElement('div');item.className='doll-item';
+    item.style.background=`linear-gradient(135deg,${d.color}44,${d.color}22)`;
+    item.textContent=d.emoji;
+    if(collected.has(i))item.classList.add('collected');
+    item.onclick=e=>{showDoll(d,i);spawnSparks(e,item);if(!collected.has(i)){collected.add(i);item.classList.add('collected');updateAchieve();heartBurst(e.clientX,e.clientY)}};
+    g.appendChild(item);
+  });
+}
+
+function showDoll(doll,idx){
+  let msgs=['你是最温柔的双鱼女孩~','每一天都像娃娃一样可爱！','朋友眼里的小天使 💕','愿你的世界永远柔软美好','像大海里的鱼儿一样自由','今天的你也闪闪发光 ✨','双鱼座的浪漫就是你呀','这个世界因为有你更甜了','保持可爱，永远被爱','你值得所有美好的事物'];
+  let m=msgs[Math.floor(Math.random()*msgs.length)];
+  document.getElementById('modalContent').innerHTML=`
+    <div class="big-emoji">${doll.emoji}</div><h3>${doll.name}</h3>
+    <p>${doll.msg}<br><br>💝 ${m}</p>
+    <button onclick="closeModal();note(880,.15);note(1047,.25)">好可爱！💗</button>`;
+  document.getElementById('modal').style.display='flex';
+  note(659,.1);setTimeout(()=>note(784,.1),100);setTimeout(()=>note(880,.15),200);
+}
+
+function spawnSparks(e,el){
+  let r=el.getBoundingClientRect(),cx=e.clientX-r.left,cy=e.clientY-r.top;
+  for(let i=0;i<6;i++){let s=document.createElement('span');s.className='spark';s.textContent=['✨','💕','⭐','💖','🌟','💝'][i];s.style.cssText=`left:${cx}px;top:${cy}px;--sx:${(Math.random()-.5)*70}px;--sy:${(Math.random()-.5)*70}px`;el.appendChild(s);setTimeout(()=>s.remove(),600)}
+}
+
+function updateAchieve(){
+  let c=collected.size;document.getElementById('collectCount').textContent=c;
+  let pct=Math.round(c/12*100);
+  document.getElementById('achieveFill').style.width=pct+'%';
+  document.getElementById('achieveFill').textContent=c+'/12';
+  if(c===12){setTimeout(()=>{document.getElementById('modalContent').innerHTML=`<div class="big-emoji">🏆</div><h3>太厉害了！</h3><p>你收集了全部12只娃娃！<br><br>双鱼座的你，<br>值得被整个世界温柔以待 💕<br><br>每一个娃娃都在说：<br>遇见你真好~</p><button onclick="closeModal();spawnConfetti()">谢谢！🎉</button>`;document.getElementById('modal').style.display='flex';spawnConfetti()},500)}
+}
+
+// ========== 夹娃娃机 ==========
+function playClaw(){
+  let btn=document.getElementById('clawBtn'),disp=document.getElementById('clawDisplay');
+  btn.disabled=true;btn.textContent='🎯 爪子下降中...';let f=0,anim=setInterval(()=>{disp.textContent=['🎁','❓','🎯','🎁','❓','🎯'][f++%6];disp.style.transform=`translateX(${(Math.random()-.5)*18}px)`},140);
+  setTimeout(()=>{clearInterval(anim);disp.style.transform='translateX(0)';
+    if(Math.random()>.25){clawCount++;let d=dolls[Math.floor(Math.random()*dolls.length)];disp.textContent=d.emoji;disp.classList.add('win');document.getElementById('clawCount').textContent=clawCount;spawnConfetti();note(523,.1);note(659,.1);note(784,.1);note(1047,.25);
+      setTimeout(()=>{document.getElementById('modalContent').innerHTML=`<div class="big-emoji">${d.emoji}</div><h3>抓到了！${d.name}</h3><p>${d.msg}<br><br>🎉 已抓 ${clawCount} 只！</p><button onclick="closeModal()">太棒了！🎀</button>`;document.getElementById('modal').style.display='flex'},500)}
+    else{disp.textContent='😿';note(330,.15);note(262,.25);setTimeout(()=>{disp.textContent='🎁';disp.classList.remove('win')},700)}
+    btn.disabled=false;btn.textContent='🕹️ 再抓一次';setTimeout(()=>disp.classList.remove('win'),1800)},1600)
+}
+
+// ========== 彩带 ==========
+function spawnConfetti(){
+  let colors=['#FFB6C1','#FF69B4','#DDA0DD','#FFD700','#FFE4E1','#B0E0E6','#FFD1DC','#FFC0CB'];
+  for(let i=0;i<50;i++){let c=document.createElement('span');c.style.cssText=`position:fixed;pointer-events:none;z-index:500;left:${Math.random()*100}%;top:-20px;font-size:${14+Math.random()*22}px;animation:confettiFall ${1.5+Math.random()*3}s linear ${Math.random()*.5}s forwards`;c.textContent=['🎀','💖','⭐','✨','💕','🧸','🌟','💝','🦄','🎉'][Math.floor(Math.random()*10)];document.body.appendChild(c);setTimeout(()=>c.remove(),4000)}
+  // Add confetti keyframes dynamically if not present
+  if(!document.getElementById('confettiStyle')){
+    let s=document.createElement('style');s.id='confettiStyle';s.textContent='@keyframes confettiFall{0%{transform:translateY(-10vh) rotate(0);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}';document.head.appendChild(s)
+  }
+}
+
+// ========== 信封 ==========
+function openLetter(){
+  let env=document.getElementById('envelope'),letter=document.getElementById('letterReveal');
+  env.textContent='💌';env.classList.add('opened');letter.classList.add('show');
+  note(523,.15);note(659,.15);note(784,.2);note(1047,.3);
+  heartBurst(window.innerWidth/2,window.innerHeight/2);
+}
+
+// ========== 星座运势 ==========
+function openFortune(){
+  let fortunes=['今天会有意想不到的小惊喜哦~ 🎁','你笑起来的样子最好看！😊','幸运色是粉红色，穿它准没错 💗','朋友都在默默关心你呢~','去做一件一直想做的事吧！','今天适合吃甜食，不要委屈自己 🍰','有人正在偷偷想你... 💭','双鱼座的直觉今天特别准！🔮'];
+  let lucky=['幸运数字：7','幸运颜色：粉色','幸运食物：草莓蛋糕','幸运动作：抱一下娃娃','幸运时间：下午3点'];
+  let f=fortunes[Math.floor(Math.random()*fortunes.length)],l=lucky[Math.floor(Math.random()*lucky.length)];
+  document.getElementById('modalContent').innerHTML=`<div class="big-emoji">♓</div><h3>双鱼座今日运势</h3><p>${f}<br><br>🔮 ${l}<br><br>⭐ 整体运势：★★★★☆</p><button onclick="closeModal()">接好运 ✨</button>`;
+  document.getElementById('modal').style.display='flex';note(784,.15);note(988,.2);note(1047,.3)
+}
+
+// ========== 留言 ==========
+let nicks=['🐰兔兔','🐱喵喵','🐶旺财','🦊阿狸','🐼滚滚','🐨考拉','🦄独角兽','🐧企鹅','🐻熊熊','🐸呱呱'];
+function sendMsg(){
+  let inp=document.getElementById('msgInput'),txt=inp.value.trim();if(!txt)return;
+  let m=document.createElement('div');m.className='msg-item';
+  m.innerHTML=`<span style="font-size:22px">${nicks[Math.floor(Math.random()*nicks.length)].slice(0,2)}</span><span>${escapeHtml(txt)}</span>`;
+  document.getElementById('msgBoard').appendChild(m);document.getElementById('msgBoard').scrollTop=9999;
+  inp.value='';note(659,.1);note(784,.15)
+}
+function escapeHtml(s){let d=document.createElement('div');d.textContent=s;return d.innerHTML}
+
+// ========== Modal ==========
+function closeModal(){document.getElementById('modal').style.display='none'}
+
+// ========== 初始化 ==========
+spawnPetals();spawnBubbles();buildGrid();
+
+setTimeout(()=>{
+  document.getElementById('modalContent').innerHTML=`<div class="big-emoji">🧸</div><h3>欢迎来到娃娃小屋！</h3><p>这里住着你的12只娃娃~<br><br>🍞 吐司抱枕在等你<br>💙 史迪奇和Angel在等你<br>🐷 大猪猪也在等你<br><br>点击它们、抓它们、收集它们！<br>收集全部12只有惊喜哦 ✨</p><button onclick="closeModal();note(784,.15);note(1047,.25)">开始探索 🎀</button>`;
+  document.getElementById('modal').style.display='flex'
+},700);
+
+console.log('🧸 双鱼女孩的娃娃惊喜小屋已就绪！');
+console.log('✨ 功能：鼠标拖尾 | 樱花飘落 | 夹娃娃机 | 收集成就 | 星座运势 | 秘密信封 | 留言板');
+</script>
+</body>
+</html>
